@@ -4,7 +4,7 @@ var ipc = require('electron').ipcRenderer;
 var React = require('react');
 var Dom = require('react-dom');
 
-var model = function(){
+var model_react = function(){
 	var self ={
 		render: function() {
 			return React.createElement("div", null, "Hello ", this.props.name);
@@ -22,7 +22,7 @@ var model = function(){
 
 var init = function(){
 	Dom.render(
-		React.createElement(Hello, {name: "World"}),
+		React.createElement("", {}),
 		document.getElementById('container')
 	);
 }
@@ -40,20 +40,44 @@ var model = function(data){
 		name: '',
 		name_new:'',
 		path:'',
+		strict: true
 	}
-	for(let pi = 0; pi < self.length; pi++){
-		if(data.hasOwnProperty(pi)){
-			self[pi] = data[pi];
+	self.type = function(obj){
+		return Object.prototype.toString.call(obj).slice(8, -1);
+	}
+	self.defined = {};
+	self.validate = function(){
+
+	};
+	self.hydrate = function(_d){
+		for(let pi in _d){
+			if(!self.defined.hasOwnProperty(pi)){
+				continue
+			}
+			self[pi] = _d[pi];
 		}
 	}
-	self.validate = function(){
-		for(let pi = 0; pi < self.length; pi++){
-			if(data.hasOwnProperty(pi)){
-				self[pi] = data[pi];
+	self.out = function(){
+		var out = {}
+		for(let pi in self.defined){
+			out[pi] = self[pi];
+		}
+		return out
+	}
+	self.extend = function(data){
+		self.build(data)
+		return self
+	}
+	self.build = (function(_d){
+		return function(){
+			for(let pi in _d){
+				self.defined[pi] = self.type(_d[pi]);
+				self[pi] = _d[pi];
 			}
 		}
-	};
-	return self;
+	})(data)
+
+	return self.extend(self.defined)
 };
 
 ipc.on('file_results',function(event, data){
