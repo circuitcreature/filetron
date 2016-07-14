@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script>require('electron-connect').client.create()</script>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="./css/style.css">
+	<script src="./js/knockout-3.4.0.js"></script>
+	<script src="./js/file.js"></script>
+
+	<title>File-er</title>
+</head>
+<body>
+	<div id="container"></div>
+	<div id="main">
+		<div data-bind="click: open">Open</div>
+		<div data-bind="foreach: files">
+			<div data-bind="foreach: paths">
+				<div data-bind="text: path"></div>
+				<div data-bind="foreach: files">
+					<div data-bind="text: name"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+
+</html>
